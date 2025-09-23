@@ -16,7 +16,7 @@ do
         Record_Name="$DOMAIN_NAME" 
     fi
 
-    echo $instance:$Private_Ip    
+    echo $instance:$Ip    
 
     aws route53 change-resource-record-sets \
     --hosted-zone-id $ZONE_ID \
