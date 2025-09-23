@@ -19,21 +19,21 @@ do
     echo $instance:$Private_Ip    
 
     aws route53 change-resource-record-sets \
-  --hosted-zone-id $ZONE_ID \
-  --change-batch '
-  {
-    "Comment": "creating a record set"
-    ,"Changes": [{
-      "Action"              : "CREATE"
-      ,"ResourceRecordSet"  : {
-        "Name"              : "'$RECORD_NAME'"
-        ,"Type"             : "A"
-        ,"TTL"              : 1
-        ,"ResourceRecords"  : [{
-            "Value"         : "'$IP'"
+    --hosted-zone-id $ZONE_ID \
+    --change-batch '
+    {
+         "Comment": "creating a record set"
+         ,"Changes": [{
+         "Action"              : "CREATE"
+         ,"ResourceRecordSet"  : {
+            "Name"              : "'$RECORD_NAME'"
+            ,"Type"             : "A"
+            ,"TTL"              : 1
+            ,"ResourceRecords"  : [{
+                "Value"         : "'$IP'"
+            }]
+        }
         }]
-      }
-    }]
-  }
-  '
+    }
+    '
 done
