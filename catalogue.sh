@@ -82,7 +82,7 @@ VALIDATE $? "catalgoue service enabled"
 systemctl start catalogue &>>$LOG_FILE
 VALIDATE $? "catalgour service started"
 
-cp mongo.repo vim /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
+cp $SCRIPT_DIR/mongo.repo  /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
 
 dnf install mongodb-mongosh -y &>>$LOG_FILE
 VALIDATE $? "mongodb installed"
