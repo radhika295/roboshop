@@ -11,6 +11,8 @@ if [ $USERID -ne 0 ]; then
     echo -e "$R ERROR :: Please run this scirpt with root privilage $N"
     exit 1
 fi
+SCRIPT_DIR=$PWD
+
 LOGS_FOLDER="/var/log/shell-roboshop"
 
 mkdir -p $LOGS_FOLDER
@@ -42,10 +44,15 @@ VALIDATE $? "Enableling Nodejs 20"
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "Installed NodeJS"
 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
-VALIDATE $? "System user is created"
+id roboshop
+if [ $? -ne 0 ]; then
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
+    VALIDATE $? "System user is created"
+else
+    echo "User already exist....$Y Skipping $N"
+fi
 
-mkdir /app 
+mkdir -p /app 
 VALIDATE $? "Created App folder"
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip  &>>$LOG_FILE
@@ -54,13 +61,16 @@ VALIDATE $? "Downloaded Catalgoue from S3"
 cd /app
 VALIDATE $? "chagned into app directory"
 
+rm -rf /app/*
+VALIDATE $? "Remove old files"
+
 unzip /tmp/catalogue.zip &>>$LOG_FILE
 VALIDATE $? "Unziped the catalgoue folder"
 
 npm install &>>$LOG_FILE
 VALIDATE $? "nodejs installed successfully"
 
-cp catalogue.service vim /etc/systemd/system/catalogue.service
+cp $SCRIPT_DIR/catalogue.service vim /etc/systemd/system/catalogue.service
 VALIDATE $? "catalgoue service is implementedy"
 
 systemctl daemon-reload &>>$LOG_FILE
