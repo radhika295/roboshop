@@ -21,6 +21,8 @@ SCRIPT_NAME=$( echo $0 | cut -d "." -f1)
 
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 
+MONGODB_HOST=mongodb.devtraining.icu
+
 #mkdir -p $LOGS_FOLDER
 
 echo "Script satrted executed at: $(date)" | tee -a $LOG_FILE
