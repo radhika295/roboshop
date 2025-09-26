@@ -25,17 +25,17 @@ echo "Script satrted executed at: $(date)" | tee -a $LOG_FILE
 
 VALIDATE() {
     if [ $1 -eq 0 ]; then
-         echo -e "$2 is installed successfully: $G Success $N" | tee -a $LOG_FILE
+         echo -e "$2 .. : $G Success $N" | tee -a $LOG_FILE
          
     else    
-         echo -e "$2 is not installed it is failed: $R Failed $N" | tee -a $LOG_FILE
+         echo -e "$2 .. : $R Failed $N" | tee -a $LOG_FILE
          exit 1
     fi
 }
 
 cp mongo.repo /etc/yum.repos.d/mongo.repo
 
-VALIDATE $? "Adding Repo"
+VALIDATE $? "Adding Repo in mongobd server"
 
 dnf install mongodb-org -y &>>$LOG_FILE
 
