@@ -38,18 +38,23 @@ VALIDATE() {
     fi
 }
 
-dnf install mysql-server -y &>>$LOG_FILE
-VALIDATE $? "Installing MYSQL"
-
-systemctl enable mysqld &>>$LOG_FILE
-VALIDATE $? "Enabled MYSQL"
-
-systemctl start mysqld  &>>$LOG_FILE
-VALIDATE $? "Started MYSQL"
+cp $SCRIPT_DIR/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
 
 
-mysql_secure_installation --set-root-pass RoboShop@1 &>>$LOG_FILE
-VALIDATE $? "Setting up root password"
+dnf install rabbitmq-server -y &>>$LOG_FILE
+VALIDATE $? "Installing rabbitmq"
+
+systemctl enable rabbitmq-server &>>$LOG_FILE
+VALIDATE $? "Enabled rabbitmq"
+
+systemctl start rabbitmq-server  &>>$LOG_FILE
+VALIDATE $? "Started Rabbitmq"
+
+rabbitmqctl add_user roboshop roboshop123
+VALIDATE $? "Usercreated"
+
+rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"
+VALIDATE $? "Validate permission"
 
 END_TIME=$(date +%s)
 
