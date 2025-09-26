@@ -24,6 +24,8 @@ LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 
 #mkdir -p $LOGS_FOLDER
 
+MONGODB_HOST=mongodb.devtraining.icu
+
 echo "Script satrted executed at: $(date)" | tee -a $LOG_FILE
 
 
@@ -78,5 +80,16 @@ cp $SCRIPT_DIR/mongo.repo  /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
 
 dnf install mongodb-mongosh -y &>>$LOG_FILE
 
+INDEX=$(mongosh mongodb.daws86s.fun --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')")
+if [ $INDEX -le 0 ]; then
+    mongosh --host $MONGODB_HOST </app/db/master-data.js &>>$LOG_FILE
+    VALIDATE $? "Load catalogue products"
+else
+    echo -e "Catalogue products already loaded ... $Y SKIPPING $N"
+fi
 
-mongosh --host mongodb.devtraining.icu </app/db/master-data.js &>>$LOG_FILE
+
+systemctl restart catalogue
+VALIDATE $? "Restarted catalogue"
+
+#mongosh --host mongodb.devtraining.icu </app/db/master-data.js &>>$LOG_FILE
