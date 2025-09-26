@@ -50,10 +50,10 @@ VALIDATE $? "Enabled rabbitmq"
 systemctl start rabbitmq-server  &>>$LOG_FILE
 VALIDATE $? "Started Rabbitmq"
 
-rabbitmqctl add_user roboshop roboshop123
+rabbitmqctl add_user roboshop roboshop123 &>>$LOG_FILE
 VALIDATE $? "Usercreated"
 
-rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"
+rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*" &>>$LOG_FILE
 VALIDATE $? "Validate permission"
 
 END_TIME=$(date +%s)
