@@ -70,8 +70,8 @@ VALIDATE $? "Unziped the catalgoue folder"
 npm install &>>$LOG_FILE
 VALIDATE $? "nodejs installed successfully"
 
-cp $SCRIPT_DIR/catalogue.service vim /etc/systemd/system/catalogue.service
-VALIDATE $? "catalgoue service is implementedy"
+cp $SCRIPT_DIR/catalogue.service  /etc/systemd/system/catalogue.service
+VALIDATE $? "catalgoue service is implemented"
 
 systemctl daemon-reload &>>$LOG_FILE
 VALIDATE $? "system reloaded"
