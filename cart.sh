@@ -6,82 +6,69 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 
-
-if [ $USERID -ne 0 ]; then
-    echo -e "$R ERROR :: Please run this scirpt with root privilage $N"
-    exit 1
-fi
-
-START_TIME=$(date +%s)
-
+LOGS_FOLDER="/var/log/shell-roboshop"
+SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 SCRIPT_DIR=$PWD
 
-LOGS_FOLDER="/var/log/shell-roboshop"
+LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" # /var/log/shell-script/16-logs.log
 
 mkdir -p $LOGS_FOLDER
+echo "Script started executed at: $(date)" | tee -a $LOG_FILE
 
-SCRIPT_NAME=$( echo $0 | cut -d "." -f1)
+if [ $USERID -ne 0 ]; then
+    echo "ERROR:: Please run this script with root privelege"
+    exit 1 # failure is other than 0
+fi
 
-LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
-
-#mkdir -p $LOGS_FOLDER
-
-echo "Script satrted executed at: $(date)" | tee -a $LOG_FILE
-
-VALIDATE() {
-    if [ $1 -eq 0 ]; then
-         echo -e "$2  : $G Success $N" | tee -a $LOG_FILE
-         
-    else    
-         echo -e "$2  : $R Failed $N" | tee -a $LOG_FILE
-         exit 1
+VALIDATE(){ # functions receive inputs through args just like shell script args
+    if [ $1 -ne 0 ]; then
+        echo -e "$2 ... $R FAILURE $N" | tee -a $LOG_FILE
+        exit 1
+    else
+        echo -e "$2 ... $G SUCCESS $N" | tee -a $LOG_FILE
     fi
 }
 
+##### NodeJS ####
 dnf module disable nodejs -y &>>$LOG_FILE
-VALIDATE $? "Disabling all Nodejs"
-
-dnf module enable nodejs:20 -y &>>$LOG_FILE
-VALIDATE $? "Enableling Nodejs 20"
- 
+VALIDATE $? "Disabling NodeJS"
+dnf module enable nodejs:20 -y  &>>$LOG_FILE
+VALIDATE $? "Enabling NodeJS 20"
 dnf install nodejs -y &>>$LOG_FILE
-VALIDATE $? "Installed NodeJS"
+VALIDATE $? "Installing NodeJS"
 
-id roboshop
+id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
-    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
-    VALIDATE $? "System user is created"
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+    VALIDATE $? "Creating system user"
 else
-    echo -e "User already exist....$Y Skipping $N"
+    echo -e "User already exist ... $Y SKIPPING $N"
 fi
 
-mkdir -p /app 
-VALIDATE $? "Created App folder"
+mkdir -p /app
+VALIDATE $? "Creating app directory"
 
-curl -L -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip   &>>$LOG_FILE
-VALIDATE $? "Downloaded cart from S3"
+curl -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip &>>$LOG_FILE
+VALIDATE $? "Downloading cart application"
 
-cd /app
-VALIDATE $? "chagned into app directory"
+cd /app 
+VALIDATE $? "Changing to app directory"
 
 rm -rf /app/*
-VALIDATE $? "Remove old files"
+VALIDATE $? "Removing existing code"
 
 unzip /tmp/cart.zip &>>$LOG_FILE
-VALIDATE $? "Unziped the catalgoue folder"
+VALIDATE $? "unzip cart"
 
 npm install &>>$LOG_FILE
-VALIDATE $? "nodejs installed successfully"
+VALIDATE $? "Install dependencies"
 
-cp $SCRIPT_DIR/cart.service  /etc/systemd/system/cart.service
-VALIDATE $? "cart service is implemented"
+cp $SCRIPT_DIR/cart.service /etc/systemd/system/cart.service
+VALIDATE $? "Copy systemctl service"
 
 systemctl daemon-reload
-VALIDATE $? "Restarted cart"
+systemctl enable cart &>>$LOG_FILE
+VALIDATE $? "Enable cart"
 
-systemctl enable cart 
+systemctl restart cart
 VALIDATE $? "Restarted cart"
-
-systemctl start cart
-VALIDATE $? "Restarted cart"
-
