@@ -12,7 +12,7 @@ if [ $USERID -ne 0 ]; then
     exit 1
 fi
 
-END_TIME=$(date +%s)
+STARTS_TIME=$(date +%s)
 
 SCRIPT_DIR=$PWD
 
@@ -47,7 +47,7 @@ VALIDATE $? "Enableled redis"
 dnf install redis -y &>>$LOG_FILE
 VALIDATE $? "Installed Redis"
 
-sed -i -e 's/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf -e '/proctected-mode/ c protected-mode no' &>>$LOG_FILE
+sed -i -e 's/127.0.0.1/0.0.0.0/g' /etc/redis/redis.conf -e '/protected-mode/ c protected-mode no' &>>$LOG_FILE
 VALIDATE $? "changed to 0.0.0.0 and preocted mode is off"
 
 systemctl enable redis &>>$LOG_FILE
