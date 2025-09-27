@@ -58,7 +58,7 @@ fi
 mkdir -p /app 
 VALIDATE $? "Created App folder"
 
-curl -L -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip   &>>$LOG_FILE
+curl -L -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip   &>>$LOG_FILE
 VALIDATE $? "Downloaded Catalgoue from S3"
 
 cd /app
@@ -67,20 +67,21 @@ VALIDATE $? "chagned into app directory"
 rm -rf /app/*
 VALIDATE $? "Remove old files"
 
-unzip /tmp/user.zip &>>$LOG_FILE
+unzip /tmp/cart.zip &>>$LOG_FILE
 VALIDATE $? "Unziped the catalgoue folder"
 
 npm install &>>$LOG_FILE
 VALIDATE $? "nodejs installed successfully"
 
-cp $SCRIPT_DIR/user.service  /etc/systemd/system/user.service &>>$LOG_FILE
+cp $SCRIPT_DIR/cart.service  /etc/systemd/system/cart.service
+VALIDATE $? "catalgoue service is implemented"
 
 systemctl daemon-reload
-VALIDATE $? "Restarted user"
+VALIDATE $? "Restarted cart"
 
-systemctl enable user 
-VALIDATE $? "Restarted user"
+systemctl enable cart 
+VALIDATE $? "Restarted cart"
 
-systemctl start user 
-VALIDATE $? "Restarted user"
+systemctl start cart
+VALIDATE $? "Restarted cart"
 
