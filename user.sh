@@ -74,6 +74,7 @@ npm install &>>$LOG_FILE
 VALIDATE $? "nodejs installed successfully"
 
 cp $SCRIPT_DIR/user.service  /etc/systemd/system/user.service &>>$LOG_FILE
+VALIDATE $? "User service created"
 
 systemctl daemon-reload
 VALIDATE $? "Restarted user"
