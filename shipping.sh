@@ -80,8 +80,6 @@ else
     echo -e "Shipping data is already loaded ... $Y SKIPPING $N"
 fi
 
-VALIDATE $? "files copied to mysql"
-
 systemctl restart shipping
 
 VALIDATE $? "restarted shipping"
