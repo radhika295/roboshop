@@ -59,7 +59,7 @@ mkdir -p /app
 VALIDATE $? "Created App folder"
 
 curl -L -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip   &>>$LOG_FILE
-VALIDATE $? "Downloaded Catalgoue from S3"
+VALIDATE $? "Downloaded cart from S3"
 
 cd /app
 VALIDATE $? "chagned into app directory"
@@ -74,7 +74,7 @@ npm install &>>$LOG_FILE
 VALIDATE $? "nodejs installed successfully"
 
 cp $SCRIPT_DIR/cart.service  /etc/systemd/system/cart.service
-VALIDATE $? "catalgoue service is implemented"
+VALIDATE $? "cart service is implemented"
 
 systemctl daemon-reload
 VALIDATE $? "Restarted cart"
