@@ -85,3 +85,6 @@ VALIDATE $? "Restarted user"
 systemctl start user 
 VALIDATE $? "Restarted user"
 
+systemctl status user
+VALIDATE $? "Iser service is started"
+
